@@ -61,7 +61,10 @@ int handle_TLB(int PageNo)
         {
             frame = TLB[i][1];
             TLB_hit++;
+            Page_Table_hit++;
+            return frame;
         }
+        
     }
     if (frame == -1)
     {
@@ -81,12 +84,13 @@ int handle_TLB(int PageNo)
                 TLB[i - 1][0] = TLB[i][0];
                 TLB[i - 1][1] = TLB[i][1];
             }
-            current_TLB_loc--;
+            //current_TLB_loc--;
             /////inset the page fault value
-            TLB[current_TLB_loc][0] = PageNo;
-            TLB[current_TLB_loc][1] = Page_Table[PageNo];
+            TLB[TLB_SIZE-1][0] = PageNo;
+            TLB[TLB_SIZE-1][1] = Page_Table[PageNo];
             frame = Page_Table[PageNo];
         }
+        
     }
     return frame;
 }
@@ -133,8 +137,8 @@ int main(int argc, char *argv[])
     }
     printf("TLB hit:%d\n",TLB_hit);
     printf("TLB hit rate:%.4f\n",TLB_hit/count);
-    printf("Page_Table hit:%d\n",Page_Table_hit);
-    printf("Page_Table hit rate:%.4f\n",Page_Table_hit/count);
+    printf("Page fault:%d\n",1000-Page_Table_hit);
+    printf("Page  fault rate:%.4f\n",(1000-Page_Table_hit)/count);
     fclose(address_file);
     fclose(backing_store);
     fclose(fptr);
